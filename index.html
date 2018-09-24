@@ -1,0 +1,1196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>UOIT Room Finder API</title>
+  <base href="/">
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<style>
+
+@media print {
+  *,
+  *:before,
+  *:after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  a[href]:after {
+    content: " (" attr(href) ")";
+  }
+
+  abbr[title]:after {
+    content: " (" attr(title) ")";
+  }
+
+  a[href^="#"]:after,
+  a[href^="javascript:"]:after {
+    content: "";
+  }
+
+  pre,
+  blockquote {
+    border: 1px solid #999;
+    page-break-inside: avoid;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr,
+  img {
+    page-break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}
+
+html {
+  font-size: 12px;
+}
+
+@media screen and (min-width: 32rem) and (max-width: 48rem) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media screen and (min-width: 48rem) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  line-height: 1.85;
+}
+
+p,
+.splendor-p {
+  font-size: 1rem;
+  margin-bottom: 1.3rem;
+}
+
+h1,
+.splendor-h1,
+h2,
+.splendor-h2,
+h3,
+.splendor-h3,
+h4,
+.splendor-h4 {
+  margin: 1.414rem 0 .5rem;
+  font-weight: inherit;
+  line-height: 1.42;
+}
+
+h1,
+.splendor-h1 {
+  margin-top: 0;
+  font-size: 3.998rem;
+}
+
+h2,
+.splendor-h2 {
+  font-size: 2.827rem;
+}
+
+h3,
+.splendor-h3 {
+  font-size: 1.999rem;
+}
+
+h4,
+.splendor-h4 {
+  font-size: 1.414rem;
+}
+
+h5,
+.splendor-h5 {
+  font-size: 1.121rem;
+}
+
+h6,
+.splendor-h6 {
+  font-size: .88rem;
+}
+
+small,
+.splendor-small {
+  font-size: .707em;
+}
+
+/* https://github.com/mrmrs/fluidity */
+
+img,
+canvas,
+iframe,
+video,
+svg,
+select,
+textarea {
+  max-width: 100%;
+}
+
+@import url(http://fonts.googleapis.com/css?family=Merriweather:300italic,300);
+
+html {
+  font-size: 18px;
+  max-width: 100%;
+}
+
+body {
+  color: #444;
+  font-family: 'Merriweather', Georgia, serif;
+  margin: 0;
+  max-width: 100%;
+}
+
+/* === A bit of a gross hack so we can have bleeding divs/blockquotes. */
+
+p,
+*:not(div):not(img):not(body):not(html):not(li):not(blockquote):not(p) {
+  margin: 1rem auto 1rem;
+  max-width: 36rem;
+  padding: .25rem;
+}
+
+div {
+  width: 100%;
+}
+
+div img {
+  width: 100%;
+}
+
+blockquote p {
+  font-size: 1.5rem;
+  font-style: italic;
+  margin: 1rem auto 1rem;
+  max-width: 48rem;
+}
+
+li {
+  margin-left: 2rem;
+}
+
+/* Counteract the specificity of the gross *:not() chain. */
+
+h1 {
+  padding: 4rem 0 !important;
+}
+
+/*  === End gross hack */
+
+p {
+  color: #555;
+  height: auto;
+  line-height: 1.45;
+}
+
+pre,
+code {
+  font-family: Menlo, Monaco, "Courier New", monospace;
+}
+
+pre {
+  background-color: #fafafa;
+  font-size: .8rem;
+  overflow-x: scroll;
+  padding: 1.125em;
+}
+
+a,
+a:visited {
+  color: #3498db;
+}
+
+a:hover,
+a:focus,
+a:active {
+  color: #2980b9;
+}
+</style>
+
+<body>
+<h1 id="uoit-room-finder-api">UOIT-Room-Finder-API</h1>
+<p>This is a Node API using a SQL Database, which is used for all three platforms of UOIT Room Finder.</p>
+<h2 id="link">Link</h2>
+<ul>
+<li>Visit http://uoit.yshiv.com:3000/api</li>
+</ul>
+<h2 id="usage">Usage</h2>
+<ul>
+<li><code>@GET /class/all</code>
+<ul>
+<li>Parameters
+<ul>
+<li>Date <em>(YYYY-MM-DD)</em></li>
+<li>Start Time <em>(HH:mm:ss)</em></li>
+<li>End Time <em>(HH:mm:ss)</em></li>
+</ul></li>
+<li><p>This request also accepts an empty query and will return the open rooms at the time of request.</p></li>
+<li>Sample Request</li>
+</ul>
+<pre><code>http://uoit.yshiv.com:3000/api/class/all?date=2018-09-10&amp;start_time=00:08:00&amp;end_time=14:00:00</code></pre>
+<ul>
+<li>Sample Response</li>
+</ul>
+<pre><code>{
+  &quot;classes&quot;: [
+    {
+      &quot;room&quot;: &quot;EDU212&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;,
+      &quot;isLab&quot;: &quot;&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU311&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;,
+      &quot;isLab&quot;: &quot;&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU312&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;,
+      &quot;isLab&quot;: &quot;&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU210&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;,
+      &quot;isLab&quot;: &quot;&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU211&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;,
+      &quot;isLab&quot;: &quot;&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU313&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;,
+      &quot;isLab&quot;: &quot;&quot;
+    }
+  ]
+}</code></pre></li>
+<li><code>@GET /class/future</code>
+<ul>
+<li>Parameters
+<ul>
+<li>Room <strong>(Required)</strong></li>
+<li>Date <em>(YYYY-MM-DD)</em> <strong>(Required)</strong></li>
+<li>Start Time <em>(HH:mm:ss)</em></li>
+</ul></li>
+<li><p>This request requires the <code>Room</code> &amp; <code>Date</code> parameters. It will return all the classes for the day if the <code>Start Time</code> is not specified</p></li>
+<li>Sample Request</li>
+</ul>
+<pre><code>http://uoit.yshiv.com:3000/api/class/future?date=2018-09-10&amp;start_time=00:08:00&amp;room=UA1350</code></pre>
+<ul>
+<li><p>Sample Response</p>
+<pre><code>{
+  &quot;classes&quot;: [
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;start_time&quot;: &quot;08:10:00&quot;,
+      &quot;end_time&quot;: &quot;09:30:00&quot;,
+      &quot;title&quot;: &quot;Intro to Health Info. Mngmt.&quot;,
+      &quot;code&quot;: &quot;HLSC 2201U&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;start_time&quot;: &quot;09:40:00&quot;,
+      &quot;end_time&quot;: &quot;11:00:00&quot;,
+      &quot;title&quot;: &quot;Biology I&quot;,
+      &quot;code&quot;: &quot;BIOL 1010U&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;start_time&quot;: &quot;09:40:00&quot;,
+      &quot;end_time&quot;: &quot;11:00:00&quot;,
+      &quot;title&quot;: &quot;Intro Cell &amp; Molecular Biology&quot;,
+      &quot;code&quot;: &quot;BIOL 1011U&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;start_time&quot;: &quot;11:10:00&quot;,
+      &quot;end_time&quot;: &quot;12:30:00&quot;,
+      &quot;title&quot;: &quot;Anatomy &amp; Physiology I&quot;,
+      &quot;code&quot;: &quot;HLSC 1200U&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;start_time&quot;: &quot;12:40:00&quot;,
+      &quot;end_time&quot;: &quot;14:00:00&quot;,
+      &quot;title&quot;: &quot;Anatomy &amp; Physiology I&quot;,
+      &quot;code&quot;: &quot;HLSC 1200U&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;start_time&quot;: &quot;14:10:00&quot;,
+      &quot;end_time&quot;: &quot;15:30:00&quot;,
+      &quot;title&quot;: &quot;Pathophysiology I&quot;,
+      &quot;code&quot;: &quot;HLSC 2460U&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;start_time&quot;: &quot;17:10:00&quot;,
+      &quot;end_time&quot;: &quot;18:30:00&quot;,
+      &quot;title&quot;: &quot;Adv.Solid Mech.&amp; Stress Analys&quot;,
+      &quot;code&quot;: &quot;MECE 4210U&quot;
+    }
+  ]
+}</code></pre></li>
+</ul></li>
+<li><code>@GET /room/:id</code>
+<ul>
+<li>Parameters
+<ul>
+<li>Room Name (Building:Room_Number)</li>
+<li>Examples: UA1350, UB2050, ERC1094</li>
+</ul></li>
+<li><p>Sample Request</p>
+<pre><code>http://uoit.yshiv.com:3000/api/room/ua1350</code></pre></li>
+<li><p>Sample Response</p>
+<pre><code>{
+  &quot;details&quot;: [
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;
+    }
+  ]
+}</code></pre></li>
+</ul></li>
+<li><code>@GET /room/all</code>
+<ul>
+<li><p>Sample Request</p>
+<pre><code>http://uoit.yshiv.com:3000/api/room/all</code></pre></li>
+<li><p>Sample Response</p>
+<pre><code>{
+  &quot;rooms&quot;: [
+    {
+      &quot;room&quot;: &quot;DTA212&quot;,
+      &quot;building&quot;: &quot;61 Charles Street Building&quot;,
+      &quot;location&quot;: &quot;43.897385, -78.857999&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTA214&quot;,
+      &quot;building&quot;: &quot;61 Charles Street Building&quot;,
+      &quot;location&quot;: &quot;43.897385, -78.857999&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTA216&quot;,
+      &quot;building&quot;: &quot;61 Charles Street Building&quot;,
+      &quot;location&quot;: &quot;43.897385, -78.857999&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTA217&quot;,
+      &quot;building&quot;: &quot;61 Charles Street Building&quot;,
+      &quot;location&quot;: &quot;43.897385, -78.857999&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTA218&quot;,
+      &quot;building&quot;: &quot;61 Charles Street Building&quot;,
+      &quot;location&quot;: &quot;43.897385, -78.857999&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTA219&quot;,
+      &quot;building&quot;: &quot;61 Charles Street Building&quot;,
+      &quot;location&quot;: &quot;43.897385, -78.857999&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTA220&quot;,
+      &quot;building&quot;: &quot;61 Charles Street Building&quot;,
+      &quot;location&quot;: &quot;43.897385, -78.857999&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTB108&quot;,
+      &quot;building&quot;: &quot;Bordessa Hall&quot;,
+      &quot;location&quot;: &quot;43.898641, -78.862043&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTB204&quot;,
+      &quot;building&quot;: &quot;Bordessa Hall&quot;,
+      &quot;location&quot;: &quot;43.898641, -78.862043&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTB205&quot;,
+      &quot;building&quot;: &quot;Bordessa Hall&quot;,
+      &quot;location&quot;: &quot;43.898641, -78.862043&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTB210&quot;,
+      &quot;building&quot;: &quot;Bordessa Hall&quot;,
+      &quot;location&quot;: &quot;43.898641, -78.862043&quot;
+    },
+    {
+      &quot;room&quot;: &quot;DTR100&quot;,
+      &quot;building&quot;: &quot;Regent Theatre&quot;,
+      &quot;location&quot;: &quot;43.898301, -78.861992&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU210&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU211&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU212&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU311&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU312&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;
+    },
+    {
+      &quot;room&quot;: &quot;EDU313&quot;,
+      &quot;building&quot;: &quot;Education Building&quot;,
+      &quot;location&quot;: &quot;43.898021, -78.863524&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG1030&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG1035&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG1040&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG1045&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG1050&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG2030&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG2035&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG2045&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG3030&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG3035&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG3040&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG3045&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ENG3050&quot;,
+      &quot;building&quot;: &quot;OPG Engineering Building&quot;,
+      &quot;location&quot;: &quot;43.945772, -78.898470&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC1054&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC1056&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC1092&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC1094&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC1096&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC2052&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC2056&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC3027&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC3052&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC3054&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;ERC3094&quot;,
+      &quot;building&quot;: &quot;Energy Research Centre (ERC)&quot;,
+      &quot;location&quot;: &quot;43.945668, -78.896271&quot;
+    },
+    {
+      &quot;room&quot;: &quot;J101-A&quot;,
+      &quot;building&quot;: &quot;Simcoe Building/J-Wing&quot;,
+      &quot;location&quot;: &quot;43.945835, -78.894623;43.945153, -78.894744;43.944914, -78.894626&quot;
+    },
+    {
+      &quot;room&quot;: &quot;J101-B&quot;,
+      &quot;building&quot;: &quot;Simcoe Building/J-Wing&quot;,
+      &quot;location&quot;: &quot;43.945835, -78.894623;43.945153, -78.894744;43.944914, -78.894626&quot;
+    },
+    {
+      &quot;room&quot;: &quot;J102&quot;,
+      &quot;building&quot;: &quot;Simcoe Building/J-Wing&quot;,
+      &quot;location&quot;: &quot;43.945835, -78.894623;43.945153, -78.894744;43.944914, -78.894626&quot;
+    },
+    {
+      &quot;room&quot;: &quot;J115&quot;,
+      &quot;building&quot;: &quot;Simcoe Building/J-Wing&quot;,
+      &quot;location&quot;: &quot;43.945835, -78.894623;43.945153, -78.894744;43.944914, -78.894626&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC1350&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC2010&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC2020&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC2060&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC3110&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC3330&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC4130&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC4150&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SIRC4160&quot;,
+      &quot;building&quot;: &quot;Software and Informatics Resea&quot;,
+      &quot;location&quot;: &quot;43.947846, -78.898861&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SW202&quot;,
+      &quot;building&quot;: &quot;SOUTH WING&quot;,
+      &quot;location&quot;: &quot;43.942854, -78.896151&quot;
+    },
+    {
+      &quot;room&quot;: &quot;SW206&quot;,
+      &quot;building&quot;: &quot;SOUTH WING&quot;,
+      &quot;location&quot;: &quot;43.942854, -78.896151&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1120&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1140&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1220&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1240&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1350&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1420&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1440&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1520&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1540&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1620&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA1640&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA2120&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA2130&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA2140&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA2220&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA2230&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA2240&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA2460&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3120&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3130&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3140&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3220&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3230&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3240&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3420&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3480&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3520&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3620&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UA3680&quot;,
+      &quot;building&quot;: &quot;Science Building (UA)&quot;,
+      &quot;location&quot;: &quot;43.944509, -78.896440&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB2034&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB2050&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB2054&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB2058&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB2080&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB3075&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB3085&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB3095&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB4050&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB4075&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB4085&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UB4095&quot;,
+      &quot;building&quot;: &quot;Business and IT Building (UB)&quot;,
+      &quot;location&quot;: &quot;43.945162, -78.896099&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL1&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL10&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL12&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL2&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL3&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL4&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL6&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL8&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UL9&quot;,
+      &quot;building&quot;: &quot;UL Building&quot;,
+      &quot;location&quot;: &quot;43.946217, -78.897332&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UP1501&quot;,
+      &quot;building&quot;: &quot;University Pavilion&quot;,
+      &quot;location&quot;: &quot;43.943585, -78.896979&quot;
+    },
+    {
+      &quot;room&quot;: &quot;UP1502&quot;,
+      &quot;building&quot;: &quot;University Pavilion&quot;,
+      &quot;location&quot;: &quot;43.943585, -78.896979&quot;
+    }
+  ]
+}</code></pre></li>
+</ul></li>
+<li><code>@GET /room/schedule</code>
+<ul>
+<li>Parameters
+<ul>
+<li>Room Name (Building:Room_Number)</li>
+<li>Examples: UA1350, UB2050, ERC1094</li>
+</ul></li>
+<li>Sample Request</li>
+</ul>
+<pre><code>http://uoit.yshiv.com:3000/api/room/schedule?room=UA1120</code></pre>
+<ul>
+<li>Sample Response</li>
+</ul>
+<pre><code>{
+  &quot;classes&quot;: [
+    {
+      &quot;day&quot;: &quot;M&quot;,
+      &quot;start_time&quot;: &quot;08:10:00&quot;,
+      &quot;end_time&quot;: &quot;09:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;M&quot;,
+      &quot;start_time&quot;: &quot;09:40:00&quot;,
+      &quot;end_time&quot;: &quot;11:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;M&quot;,
+      &quot;start_time&quot;: &quot;11:10:00&quot;,
+      &quot;end_time&quot;: &quot;12:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;M&quot;,
+      &quot;start_time&quot;: &quot;12:40:00&quot;,
+      &quot;end_time&quot;: &quot;14:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;M&quot;,
+      &quot;start_time&quot;: &quot;14:10:00&quot;,
+      &quot;end_time&quot;: &quot;15:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;M&quot;,
+      &quot;start_time&quot;: &quot;15:40:00&quot;,
+      &quot;end_time&quot;: &quot;17:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;M&quot;,
+      &quot;start_time&quot;: &quot;17:10:00&quot;,
+      &quot;end_time&quot;: &quot;18:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;T&quot;,
+      &quot;start_time&quot;: &quot;09:40:00&quot;,
+      &quot;end_time&quot;: &quot;11:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;T&quot;,
+      &quot;start_time&quot;: &quot;11:10:00&quot;,
+      &quot;end_time&quot;: &quot;12:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;T&quot;,
+      &quot;start_time&quot;: &quot;12:40:00&quot;,
+      &quot;end_time&quot;: &quot;14:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;T&quot;,
+      &quot;start_time&quot;: &quot;14:10:00&quot;,
+      &quot;end_time&quot;: &quot;15:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;T&quot;,
+      &quot;start_time&quot;: &quot;15:40:00&quot;,
+      &quot;end_time&quot;: &quot;17:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;T&quot;,
+      &quot;start_time&quot;: &quot;17:10:00&quot;,
+      &quot;end_time&quot;: &quot;18:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;W&quot;,
+      &quot;start_time&quot;: &quot;08:10:00&quot;,
+      &quot;end_time&quot;: &quot;09:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;W&quot;,
+      &quot;start_time&quot;: &quot;09:40:00&quot;,
+      &quot;end_time&quot;: &quot;11:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;W&quot;,
+      &quot;start_time&quot;: &quot;11:10:00&quot;,
+      &quot;end_time&quot;: &quot;12:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;W&quot;,
+      &quot;start_time&quot;: &quot;12:40:00&quot;,
+      &quot;end_time&quot;: &quot;14:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;W&quot;,
+      &quot;start_time&quot;: &quot;14:10:00&quot;,
+      &quot;end_time&quot;: &quot;15:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;W&quot;,
+      &quot;start_time&quot;: &quot;15:40:00&quot;,
+      &quot;end_time&quot;: &quot;17:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;W&quot;,
+      &quot;start_time&quot;: &quot;17:10:00&quot;,
+      &quot;end_time&quot;: &quot;18:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;R&quot;,
+      &quot;start_time&quot;: &quot;09:40:00&quot;,
+      &quot;end_time&quot;: &quot;11:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;R&quot;,
+      &quot;start_time&quot;: &quot;11:10:00&quot;,
+      &quot;end_time&quot;: &quot;12:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;R&quot;,
+      &quot;start_time&quot;: &quot;12:40:00&quot;,
+      &quot;end_time&quot;: &quot;14:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;R&quot;,
+      &quot;start_time&quot;: &quot;14:10:00&quot;,
+      &quot;end_time&quot;: &quot;15:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;R&quot;,
+      &quot;start_time&quot;: &quot;16:10:00&quot;,
+      &quot;end_time&quot;: &quot;17:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;R&quot;,
+      &quot;start_time&quot;: &quot;18:40:00&quot;,
+      &quot;end_time&quot;: &quot;21:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;F&quot;,
+      &quot;start_time&quot;: &quot;08:10:00&quot;,
+      &quot;end_time&quot;: &quot;09:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;F&quot;,
+      &quot;start_time&quot;: &quot;09:40:00&quot;,
+      &quot;end_time&quot;: &quot;11:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;F&quot;,
+      &quot;start_time&quot;: &quot;11:10:00&quot;,
+      &quot;end_time&quot;: &quot;12:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;F&quot;,
+      &quot;start_time&quot;: &quot;12:40:00&quot;,
+      &quot;end_time&quot;: &quot;14:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;F&quot;,
+      &quot;start_time&quot;: &quot;14:10:00&quot;,
+      &quot;end_time&quot;: &quot;15:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;F&quot;,
+      &quot;start_time&quot;: &quot;15:40:00&quot;,
+      &quot;end_time&quot;: &quot;17:00:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    },
+    {
+      &quot;day&quot;: &quot;F&quot;,
+      &quot;start_time&quot;: &quot;17:10:00&quot;,
+      &quot;end_time&quot;: &quot;18:30:00&quot;,
+      &quot;start_date&quot;: &quot;2018-09-06T00:00:00.000Z&quot;,
+      &quot;end_date&quot;: &quot;2018-12-05T00:00:00.000Z&quot;
+    }
+  ]
+}</code></pre></li>
+</ul>
+</body>
+</html>
