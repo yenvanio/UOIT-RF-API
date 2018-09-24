@@ -1,1 +1,1 @@
-# UOIT-RF-API
+# UOIT-RoomFinder-API
