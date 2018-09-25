@@ -40,7 +40,7 @@ function convertToDay(num) {
  * @param {Any} req
  * @param {Any} res
  */
-function getAll(req, res) {
+router.get('/all', (req, res) => {
   // Validating Date Format
   const date = req.query.date || moment().format('YYYY-MM-DD');
   if (!moment(date, 'YYYY-MM-DD').isValid()) {
@@ -66,8 +66,7 @@ function getAll(req, res) {
   };
 
   // Retrieve data from the Database
-  logic.getClassesByParam(queryData, function(err, queryResult) {
-    console.log(queryResult);
+  logic.getClassesByParam(queryData, (err, queryResult) => {
     if (err) {
       res.statusCode = 500;
       res.json({ errors: ['Unable to retrieve classes!'] });
@@ -76,42 +75,39 @@ function getAll(req, res) {
       res.json({ classes: queryResult });
     }
   });
-}
-
-router.get('/all', getAll());
+});
 
 
 /**
  * Get future classes in a room given a class
- * @param {Any} req 
- * @param {Any} res 
+ * @param {Any} req
+ * @param {Any} res
  */
-router.get('/future', function (req, res) {
+router.get('/future', (req, res) => {
   // Validating Date Format
-  var date = req.query.date || moment().format("YYYY-MM-DD");
-  if (!moment(date,'YYYY-MM-DD').isValid()) {
+  const date = req.query.date || moment().format('YYYY-MM-DD');
+  if (!moment(date, 'YYYY-MM-DD').isValid()) {
     res.statusCode = 400;
     res.json({ errors: ['Invalid Date Format! Use (YYYY-MM-DD)'] });
   }
 
   // Validating Time Format
-  var start_time = req.query.start_time || moment().format("HH:mm:ss");
+  const startTime = req.query.start_time || moment().format('HH:mm:ss');
 
   // Gathering Parameters
-  var day = convertToDay(moment(date).day()); // Get day from moment
-  var room = req.query.room || '';
+  const day = convertToDay(moment(date).day()); // Get day from moment
+  const room = req.query.room || '';
 
   // Assemble the query data in JSON
-  var queryData = {
-      day: day,
-      date: date,
-      start_time: start_time,
-      room: room
-  }
-  
+  const queryData = {
+    day,
+    date,
+    startTime,
+    room,
+  };
+
   // Retrieve data from the Database
-  logic.getFutureClasses(queryData, function (err, queryResult) {
-    console.log(queryResult);
+  logic.getFutureClasses(queryData, (err, queryResult) => {
     if (err) {
       res.statusCode = 500;
       res.json({ errors: ['Unable to retrieve classes!'] });
@@ -119,7 +115,7 @@ router.get('/future', function (req, res) {
       res.statusCode = 200;
       res.json({ classes: queryResult });
     }
-  });  
+  });
 });
 
 // Add functions for classes module to export
