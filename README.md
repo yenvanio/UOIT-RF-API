@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/yenvanio/UOIT-RF-API.svg?branch=master)](https://travis-ci.com/yenvanio/UOIT-RF-API)
+
 # UOIT-Room-Finder-API
 
 This is a Node API using a SQL Database, which is used for all three platforms of UOIT Room Finder.
