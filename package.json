@@ -12,6 +12,7 @@
     "eslint-plugin-json": "^1.2.1",
     "eslint-plugin-one-variable-per-var": "0.0.3",
     "express": "^4.16.3",
+    "husky": "^1.0.0-rc.15",
     "moment": "^2.22.2",
     "mysql": "^2.15.0"
   },
@@ -28,6 +29,8 @@
     "server-start": "forever start server.js",
     "server-stop": "forever stop 0",
     "lint": "./node_modules/.bin/eslint **/*.js",
-    "pretest": "npm run lint"
+    "pretest": "npm run lint",
+    "precommit": "npm run lint && npm test",
+    "prepush": "npm run lint"
   }
 }
