@@ -1,6 +1,6 @@
 {
   "name": "UOIT-Room-Finder-API",
-  "version": "0.0.1",
+  "version": "0.0.0-development",
   "private": true,
   "description": "New Swagger API Project",
   "keywords": [],
@@ -14,15 +14,18 @@
     "express": "^4.16.3",
     "husky": "^1.0.0-rc.15",
     "moment": "^2.22.2",
-    "mysql": "^2.15.0"
+    "mysql": "^2.15.0",
+    "semantic-release-cli": "^4.0.8"
   },
   "devDependencies": {
     "eslint": "^5.6.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "nodemon": "^1.18.3",
+    "semantic-release": "^15.9.16",
     "should": "^7.1.0",
-    "supertest": "^3.1.0"
+    "supertest": "^3.1.0",
+    "travis-deploy-once": "^5.0.8"
   },
   "scripts": {
     "start": "nodemon server.js",
@@ -32,5 +35,11 @@
     "lint": "./node_modules/.bin/eslint --fix api/**",
     "lint-file": "./node_modules/.bin/eslint --fix",
     "precommit": "npm run lint"
+    "travis-deploy-once": "travis-deploy-once",
+    "semantic-release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yenvanio/UOIT-RF-API.git"
   }
 }
