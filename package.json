@@ -35,7 +35,6 @@
     "lint": "./node_modules/.bin/eslint --fix api/**",
     "lint-file": "./node_modules/.bin/eslint --fix",
     "precommit": "npm run lint",
-    "travis-deploy-once": "travis-deploy-once",
     "semantic-release": "semantic-release"
   },
   "repository": {
