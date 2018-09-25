@@ -14,8 +14,7 @@ db.initialize((err) => {
  * @param {Callback} callback
  */
 const getClassesByParam = function (data, callback) {
-  const sql = `
-      SELECT DISTINCT(class.room), building.name AS building, building.location, course.isLab FROM class 
+  const sql = `SELECT DISTINCT(class.room), building.name AS building, building.location, course.isLab FROM class 
           LEFT JOIN course ON class.fk_course_crn = course.crn
           LEFT JOIN building ON class.fk_building_id = building.id
               WHERE class.start_date <= '${data.date}' AND class.end_date >= '${data.date}'
@@ -44,8 +43,7 @@ const getClassesByParam = function (data, callback) {
  * @param {Callback} callback
  */
 const getFutureClasses = function (data, callback) {
-  const sql = `
-    SELECT class.room, class.start_time, class.end_time, course.title, course.code FROM class 
+  const sql = `SELECT class.room, class.start_time, class.end_time, course.title, course.code FROM class 
         LEFT JOIN course ON class.fk_course_crn = course.crn
               WHERE class.day = '${data.day}'
               AND class.room = '${data.room}'
