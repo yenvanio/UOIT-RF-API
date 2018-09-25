@@ -1,29 +1,28 @@
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
+const express = require('express');
 
-var logic = require("../logic/rooms.js");
-var moment = require('moment');
+const router = express.Router();
+const bodyParser = require('body-parser');
+
+const logic = require('../logic/rooms.js');
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
 /**
  * Get a weekly schedule for a room
- * @param {Any} req 
- * @param {Any} res 
+ * @param {Any} req
+ * @param {Any} res
  */
-router.get('/schedule', function (req, res) {
-  // Get the room value 
-  var room = req.query.room || '';
+router.get('/schedule', (req, res) => {
+  // Get the room value
+  const room = req.query.room || '';
 
   // Assemble the query data in JSON
-  var queryData = {
-    room: room
-  }
+  const queryData = {
+    room,
+  };
 
   // Retrieve data from the Database
-  logic.getRoomSchedule(queryData, function (err, queryResult) {
-    console.log(queryResult);
+  logic.getRoomSchedule(queryData, (err, queryResult) => {
     if (err) {
       res.statusCode = 500;
       res.json({ errors: ['Unable to retrieve classes!'] });
@@ -31,18 +30,17 @@ router.get('/schedule', function (req, res) {
       res.statusCode = 200;
       res.json({ classes: queryResult });
     }
-  });  
+  });
 });
 
 /**
  * Get a list of all the rooms
- * @param {Any} req 
- * @param {Any} res 
+ * @param {Any} req
+ * @param {Any} res
  */
-router.get('/all', function (req, res) {
+router.get('/all', (req, res) => {
   // Retrieve data from the Database
-  logic.getRooms(function (err, queryResult) {
-    console.log(queryResult);
+  logic.getRooms((err, queryResult) => {
     if (err) {
       res.statusCode = 500;
       res.json({ errors: ['Unable to retrieve rooms!'] });
@@ -50,25 +48,24 @@ router.get('/all', function (req, res) {
       res.statusCode = 200;
       res.json({ rooms: queryResult });
     }
-  });  
+  });
 });
 
 /**
  * Get a list of all the rooms
- * @param {Any} req 
- * @param {Any} res 
+ * @param {Any} req
+ * @param {Any} res
  */
-router.get('/:id', function (req, res) {
-  // Get the room value 
-  var room = req.params.id || '';
+router.get('/:id', (req, res) => {
+  // Get the room value
+  const room = req.params.id || '';
 
   // Assemble the query data in JSON
-  var queryData = {
-    room: room
-  }  
+  const queryData = {
+    room,
+  };
   // Retrieve data from the Database
-  logic.getRoom(queryData, function (err, queryResult) {
-    console.log(queryResult);
+  logic.getRoom(queryData, (err, queryResult) => {
     if (err) {
       res.statusCode = 500;
       res.json({ errors: ['Unable to retrieve room!'] });
@@ -76,7 +73,7 @@ router.get('/:id', function (req, res) {
       res.statusCode = 200;
       res.json({ details: queryResult });
     }
-  });  
+  });
 });
 
 // Add functions for classes module to export
