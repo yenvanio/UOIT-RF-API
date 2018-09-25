@@ -1,20 +1,23 @@
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
+const express = require('express');
 
-var logic = require("../logic/classes.js");
-var moment = require('moment');
+const router = express.Router();
+
+const bodyParser = require('body-parser');
+
+const moment = require('moment');
+
+const logic = require('../logic/classes.js');
 
 router.use(bodyParser.urlencoded({ extended: true }));
 
 /**
  * Get classes based on query parameters
- * @param {Any} req 
- * @param {Any} res 
+ * @param {Any} req
+ * @param {Any} res
  */
 router.get('/all', function (req, res) {
   // Validating Date Format
-  var date = req.query.date || moment().format("YYYY-MM-DD");
+  const date = req.query.date || moment().format('YYYY-MM-DD');
   if (!moment(date,'YYYY-MM-DD').isValid()) {
     res.statusCode = 400;
     res.json({ errors: ['Invalid Date Format! Use (YYYY-MM-DD)'] });
