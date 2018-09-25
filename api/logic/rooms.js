@@ -14,7 +14,8 @@ db.initialize((err) => {
   * @param {Callback} callback
   */
 const getRoomSchedule = function (data, callback) {
-  const sql = `SELECT DISTINCT day, start_time, end_time, start_date, end_date FROM class
+  const sql = `
+    SELECT DISTINCT day, start_time, end_time, start_date, end_date FROM class
             WHERE class.room = '${data.room}' 
             ORDER BY CASE WHEN day = 'M' THEN '1'
                 WHEN day = 'T' THEN '2'
@@ -33,7 +34,8 @@ const getRoomSchedule = function (data, callback) {
 };
 
 const getRooms = function (callback) {
-  const sql = `SELECT DISTINCT(class.room), building.name AS building, building.location FROM class
+  const sql = `
+    SELECT DISTINCT(class.room), building.name AS building, building.location FROM class
         LEFT JOIN building ON class.fk_building_id = building.id
         ORDER BY class.room ASC`;
 
@@ -49,7 +51,8 @@ const getRooms = function (callback) {
 };
 
 const getRoom = function (data, callback) {
-  const sql = `SELECT class.room, building.location, building.name AS building FROM class
+  const sql = `
+    SELECT class.room, building.location, building.name AS building FROM class
       LEFT JOIN building ON class.fk_building_id = building.id
       WHERE room = '${data.room}'
       GROUP BY room, building, building.location`;
