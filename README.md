@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.com/yenvanio/UOIT-RF-API.svg?branch=master)](https://travis-ci.com/yenvanio/UOIT-RF-API)
+[![GitHub release](https://img.shields.io/github/release/yenvanio/UOIT-RF-API.svg)](https://github.com/yenvanio/UOIT-RF-API/releases)
 
 # UOIT-Room-Finder-API
 
