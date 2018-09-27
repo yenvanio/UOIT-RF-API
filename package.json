@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "UOIT Room Finder Node.js API",
-  "keywords": [],
+  "keywords": ["UOIT", "Room", "Finder", "Node", "API"],
   "author": "Shivanouyen Yoganathan",
   "license": "",
   "main": "app.js",
