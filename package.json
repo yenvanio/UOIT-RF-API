@@ -1,13 +1,20 @@
 {
   "name": "UOIT-Room-Finder-API",
-  "version": "1.0.0",
+  "version": "1.2.2",
   "private": true,
-  "description": "UOIT Room Finder Node API",
-  "keywords": ["UOIT", "Room", "Finder", "Node", "API"],
+  "description": "UOIT Room Finder Node.js API",
+  "keywords": [
+    "UOIT",
+    "Room",
+    "Finder",
+    "Node.js",
+    "API"
+  ],
   "author": "Shivanouyen Yoganathan",
   "license": "",
   "main": "app.js",
   "dependencies": {
+    "@semantic-release/git": "^7.0.4",
     "body-parser": "^1.18.3",
     "eslint-plugin-json": "^1.2.1",
     "eslint-plugin-one-variable-per-var": "0.0.3",
@@ -46,10 +53,16 @@
       "@semantic-release/npm",
       {
         "path": "@semantic-release/git",
-        "assets": ["package.json", "dist/**/*.{js,css}", "docs"],
+        "assets": [
+          "package.json",
+          "dist/**/*.{js,css}",
+          "docs"
+        ],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ],
-    "publish": ["@semantic-release/github"]
+    "publish": [
+      "@semantic-release/github"
+    ]
   }
 }
