@@ -49,6 +49,7 @@
     "url": "https://github.com/yenvanio/UOIT-RF-API.git"
   },
   "release": {
+    "branch": "next",
     "prepare": [
       "@semantic-release/npm",
       {
