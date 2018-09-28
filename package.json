@@ -40,5 +40,16 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/yenvanio/UOIT-RF-API.git"
+  },
+  "release": {
+    "prepare": [
+      "@semantic-release/npm",
+      {
+        "path": "@semantic-release/git",
+        "assets": ["package.json", "dist/**/*.{js,css}", "docs"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "publish": ["@semantic-release/github"]
   }
 }
