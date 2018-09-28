@@ -1,6 +1,6 @@
 {
   "name": "UOIT-Room-Finder-API",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "private": true,
   "description": "UOIT Room Finder Node.js API",
   "keywords": [
